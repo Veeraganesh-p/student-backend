@@ -4,10 +4,11 @@ const bcrypt = require('bcrypt');
 const cors = require('cors');
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
-// MongoDB connection
-mongoose.connect('mongodb://localhost:27017/student_idea_management')
+// MongoDB connection for production and development
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://pveeradgl_db_user:bZXp3QaktJbK9ek1@cluster0.e248kfb.mongodb.net/student_idea_management?retryWrites=true&w=majority&appName=Cluster0';
+mongoose.connect(MONGODB_URI)
 .then(() => console.log('Connected to MongoDB'))
 .catch(err => console.error('MongoDB connection failed:', err));
 
@@ -47,7 +48,10 @@ const Problem = mongoose.model('Problem', problemSchema);
 const Solution = mongoose.model('Solution', solutionSchema);
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: ['http://localhost:3000', 'https://student-idea-app.vercel.app'],
+    credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
